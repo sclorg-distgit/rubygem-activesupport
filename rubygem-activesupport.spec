@@ -87,7 +87,9 @@ mkdir -p %{buildroot}%{gem_dir}
 cp -a .%{gem_dir}/* %{buildroot}%{gem_dir}
 
 %check
+# disable tests during bootstrap
 exit 0
+
 pushd %{buildroot}%{gem_instdir}
 
 # for activesupport 3.2.13
