@@ -6,8 +6,8 @@
 Summary: Support and utility classes used by the Rails framework
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Epoch: 1
-Version: 4.2.5
-Release: 2%{?dist}
+Version: 4.2.5.1
+Release: 1%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.rubyonrails.org
@@ -18,8 +18,8 @@ Source0: http://rubygems.org/downloads/activesupport-%{version}.gem
 # Rails rpms, you may check it out like so
 # git clone http://github.com/rails/rails.git
 # cd rails/activesupport/
-# git checkout v4.2.5
-# tar czvf activesupport-4.2.5-tests.tgz test/
+# git checkout v4.2.5.1
+# tar czvf activesupport-4.2.5.1-tests.tgz test/
 Source2: activesupport-%{version}-tests.tgz
 
 # Removes code which breaks the test suite due to a
@@ -120,6 +120,9 @@ popd
 %{gem_instdir}/test
 
 %changelog
+* Mon Feb 08 2016 Dominic Cleal <dcleal@redhat.com> 4.2.5.1-1
+- Update Rails to 4.2.5.1
+
 * Thu Dec 17 2015 Dominic Cleal <dcleal@redhat.com> 4.2.5-2
 - Fix dependency on minitest
 
