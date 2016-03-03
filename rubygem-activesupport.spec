@@ -7,7 +7,7 @@ Summary: Support and utility classes used by the Rails framework
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Epoch: 1
 Version: 4.2.5.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.rubyonrails.org
@@ -29,17 +29,6 @@ Patch1: activesupport-tests-fix.patch
 # Allow the test suite to be run out of Rails git repo layout
 # See https://github.com/rails/rails/pull/19625
 Patch2: activesupport-4.2.1-run-out-of-rails-git.patch
-
-# We need to add the bigdecimal dependency to gemspec, otherwise it won't be
-# loaded. The reason for this is unbundling it from ruby libdir and moving
-# it under %%{gem_dir} (therefore if not in Gemfile, it won't be found).
-#
-# => This has been resolved with symlinks in Fedora for now as we failed so far to
-# add this dependency to upstream due to JRuby.
-#
-# https://bugzilla.redhat.com/show_bug.cgi?id=829209
-# https://bugs.ruby-lang.org/issues/6590
-Patch4: activesupport-add-bigdecimal-dependency.patch
 
 # Let's keep Requires and BuildRequires sorted alphabeticaly
 Requires: %{?scl_prefix_ruby}ruby(rubygems)
@@ -88,10 +77,6 @@ pushd .%{gem_instdir}
 %patch2 -p2
 popd
 
-pushd .%{gem_dir}
-#%%patch4 -p1
-popd
-
 %build
 
 %install
@@ -120,6 +105,9 @@ popd
 %{gem_instdir}/test
 
 %changelog
+* Mon Feb 29 2016 Pavel Valena <pvalena@redhat.com> - 1:4.2.5.1-4
+- Remove unused patch
+
 * Wed Feb 17 2016 Pavel Valena <pvalena@redhat.com> - 1:4.2.5.1-3
 - Update to 4.2.5.1
 
