@@ -10,7 +10,7 @@ Summary: Support and utility classes used by the Rails framework
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Epoch: 1
 Version: 3.2.8
-Release: 5%{?dist}
+Release: 6%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.rubyonrails.org
@@ -42,6 +42,10 @@ Patch4: activesupport-add-bigdecimal-dependency.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=892870
 # https://github.com/rails/rails/commit/43109ecb986470ef023a7e91beb9812718f000fe
 Patch5: activesupport-3.2.11-CVE-2013-0156-xml_parsing.patch
+
+# Fix CVE-2015-7576 Timing attack vulnerability in basic authentication
+# https://bugzilla.redhat.com/show_bug.cgi?id=1301933
+Patch6: rubygem-activesupport-3.2.22.1-CVE-2015-7576-fix-timing-attack-vulnerability.patch
 
 Requires: %{?scl_prefix}ruby(rubygems)
 Requires: %{?scl_prefix}ruby(abi) = %{rubyabi}
@@ -87,6 +91,7 @@ pushd .%{gem_instdir}
 %patch1 -p0
 %patch2 -p0
 %patch5 -p2
+%patch6 -p2
 popd
 
 pushd .%{gem_dir}
@@ -119,6 +124,10 @@ popd
 %{gem_instdir}/test
 
 %changelog
+* Tue Feb 23 2016 Vít Ondruch <vondruch@redhat.com> - 1:3.2.8-6
+- Fix Timing attack vulnerability in basic authentication.
+  Resolves: CVE-2015-7576
+
 * Fri Nov 15 2013 Vít Ondruch <vondruch@redhat.com> - 1:3.2.8-5
 - Add 'BR: rubygem(json)' to fix test suite failure.
   - Resolves: rhbz#1031082
