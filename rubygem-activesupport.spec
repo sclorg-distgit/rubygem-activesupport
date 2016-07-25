@@ -7,7 +7,7 @@ Summary: Support and utility classes used by the Rails framework
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Epoch: 1
 Version: 4.0.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.rubyonrails.org
@@ -25,6 +25,9 @@ Source2: activesupport-%{version}-tests.tgz
 # Removes code which breaks the test suite due to a
 # dependency on a file in the greater rails proj
 Patch1: activesupport-tests-fix.patch
+# Fix CVE-2015-7576 Timing attack vulnerability in basic authentication
+# https://bugzilla.redhat.com/show_bug.cgi?id=1301933
+Patch2: rubygem-activesupport-4.1.14.1-CVE-2015-7576-fix-timing-attack-vulnerability.patch
 
 Requires: %{?scl_prefix_ruby}ruby(rubygems)
 Requires: %{?scl_prefix_ruby}ruby(release)
@@ -77,6 +80,11 @@ tar xzvf %{SOURCE2} -C .%{gem_instdir}
 
 pushd .%{gem_instdir}
 %patch1 -p0
+%patch2 -p2
+
+# Fix broken string_ext_test due to change in timezone.
+# https://github.com/rails/rails/pull/17518
+sed -i '/def test_partial_string_to_time$/,/^    end$/ s/18/17/' test/core_ext/string_ext_test.rb
 popd
 
 %build
@@ -87,9 +95,6 @@ mkdir -p %{buildroot}%{gem_dir}
 cp -a .%{gem_dir}/* %{buildroot}%{gem_dir}
 
 %check
-# disable tests during bootstrap
-exit 0
-
 pushd %{buildroot}%{gem_instdir}
 
 # for activesupport 3.2.13
@@ -117,6 +122,10 @@ popd
 %{gem_instdir}/test
 
 %changelog
+* Tue Feb 23 2016 Vít Ondruch <vondruch@redhat.com> - 1:4.0.2-4
+- Fix Timing attack vulnerability in basic authentication.
+  Resolves: CVE-2015-7576
+
 * Fri Jan 31 2014 Vít Ondruch <vondruch@redhat.com> - 1:4.0.2-3
 - Remove unneeded patch.
 
