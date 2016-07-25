@@ -7,7 +7,7 @@ Summary: Support and utility classes used by the Rails framework
 Name: %{?scl_prefix}rubygem-%{gem_name}
 Epoch: 1
 Version: 4.1.5
-Release: 1%{?dist}
+Release: 3%{?dist}
 Group: Development/Languages
 License: MIT
 URL: http://www.rubyonrails.org
@@ -25,6 +25,12 @@ Source2: activesupport-%{version}-tests.tgz
 # Removes code which breaks the test suite due to a
 # dependency on a file in the greater rails proj
 Patch1: activesupport-tests-fix.patch
+# Fix CVE-2016-0753 Possible Input Validation Circumvention
+# https://bugzilla.redhat.com/show_bug.cgi?id=1301973
+Patch2: rubygem-activesupport-4.1.14.1-CVE-2016-0753-fix-possible-input-validation-circumvention.patch
+# Fix CVE-2015-7576 Timing attack vulnerability in basic authentication
+# https://bugzilla.redhat.com/show_bug.cgi?id=1301933
+Patch3: rubygem-activesupport-4.1.14.1-CVE-2015-7576-fix-timing-attack-vulnerability.patch
 
 Requires: %{?scl_prefix_ruby}ruby(rubygems)
 Requires: %{?scl_prefix_ruby}ruby(release)
@@ -77,6 +83,8 @@ tar xzvf %{SOURCE2} -C .%{gem_instdir}
 
 pushd .%{gem_instdir}
 %patch1 -p0
+%patch2 -p2
+%patch3 -p2
 popd
 
 %build
@@ -99,8 +107,7 @@ rm test/caching_test.rb
 %{?scl:scl enable %scl - << \EOF}
 # Failures/errors due to Minitest version, newer Minitest randomize running tests
 # and Rails are not ready for that
-# One failure due to test_partial_string_to_time that uses Zoneinfo's Moscow time (1 hour change)
-ruby -Ilib:test -e "Dir.glob('./test/**/*_test.rb').each {|t| require t}" | grep '3 failures, 5 errors'
+ruby -Ilib:test -e "Dir.glob('./test/**/*_test.rb').each {|t| require t}" | grep '2 failures, 5 errors'
 %{?scl:EOF}
 popd
 
@@ -116,6 +123,15 @@ popd
 %{gem_instdir}/test
 
 %changelog
+* Tue Feb 16 2016 Pavel Valena <pvalena@redhat.com> - 1:4.1.5-3
+- Fix offset in patch for CVE-2016-0753
+
+* Wed Feb 10 2016 Pavel Valena <pvalena@redhat.com> - 1:4.1.5-2
+- Fix possible input validation circumvention - rhbz#1301973
+  - Resolves: CVE-2016-0753
+- Fix Timing attack vulnerability in basic authentication - rhbz#1301933
+  - Resolves: CVE-2015-7576
+
 * Mon Jan 19 2015 Josef Stribny <jstribny@redhat.com> - 1:4.1.5-1
 - Update to 4.1.5
 
